@@ -45,7 +45,7 @@ public class FileReader {
 			System.exit(2);
 		}
 		
-		//assign input file object
+		//assign output file object
 		java.io.File file2 = new java.io.File(args[1]);
 		
 		//check that file exists
@@ -76,7 +76,8 @@ public class FileReader {
 			correct = longEnough(words);
 			//System.out.println(correct);
 			if (correct == true){
-				printArrayList(words);
+				//printArrayList(words);
+				write(words, tasks);
 			}
 		}
 		
@@ -85,6 +86,18 @@ public class FileReader {
 		//close scanner
 		input.close();
 		tasks.close();
+	}
+	
+	/**
+	 * 
+	 */
+	static void write(ArrayList<String> list, PrintWriter tasks){
+		int length = list.size();
+		tasks.println();
+		for (int i = 0; i<length-1; i++ ){
+			tasks.print(list.get(i) + ", ");
+		}
+		tasks.print(list.get(length-1));
 	}
 	
 	/**

@@ -1,14 +1,13 @@
 /**
- * This runs the NYPD Motor Vehicle Collisions Analysis on a given public safety file
+ * collision class
  *  
  * @author kathrynsutton
  *
  */
-public class CollisionsAnaRunner {
+public class Collision {
 
-	public static void main(String[] args) {
+	
 		
 
-	}
 
 }

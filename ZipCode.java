@@ -3,17 +3,19 @@
  * @author kathrynsutton
  *
  */
-public class ZipCode {
+public class ZipCode implements Comparable<ZipCode> {
 	int zip;
 	int collisions;
 	int inj_fat;
 	int cyc_inj_fat;
+	int feature;
 	
 	ZipCode(Collision c){
 		this.zip = c.getZip();
 		this.collisions = 1;
 		this.inj_fat = c.getInj();
 		this.cyc_inj_fat = c.getCycInj();
+		this.feature = -1;
 	}
 	
 	int getZip(){
@@ -60,6 +62,58 @@ public class ZipCode {
 		System.out.println("Number Injuries: " + this.inj_fat);
 		System.out.println("Number Cyclist Injuries: " + this.cyc_inj_fat);
 	}
+
+	@Override
+	public int compareTo(ZipCode z) {
+		if (feature == ZipCodeList.COLL){
+			if (this.collisions > z.collisions){
+				return -1;
+			}
+			
+			if (this.collisions == z.collisions){
+				return 0;
+			}
+			
+			else{
+				return 1;
+			}
+		} 
+		
+		if (feature == Collision.INJ){
+			if (this.inj_fat > z.inj_fat){
+				return -1;
+			}
+			
+			if (this.inj_fat == z.inj_fat){
+				return 0;
+			}
+			
+			else{
+				return 1;
+			}
+		}
+		
+		if (feature == Collision.CYC_INJ){
+			if (this.cyc_inj_fat > z.cyc_inj_fat){
+				return -1;
+			}
+			
+			if (this.cyc_inj_fat == z.cyc_inj_fat){
+				return 0;
+			}
+			
+			else{
+				return 1;
+			}
+		}
+		
+		else {
+			System.out.println("Invalid comparison");
+			return -5;
+		}
+	}
+	
+	
 	
 	
 }

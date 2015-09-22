@@ -23,16 +23,16 @@ public class CollisionList {
 	
 	public void fill(Collision c){
 		this.list.add(c);
-		c.feature = this.feature;
+		c.setFeature(this.feature);
 		
 	}
 	
 	
-	int getFeature(){
+	public int getFeature(){
 		return this.feature;
 	}
 	
-	void setFeature(int f){
+	public void setFeature(int f){
 		this.feature = f;
 		for (int i = 0; i < this.list.size(); i++){
 			list.get(i).setFeature(f);

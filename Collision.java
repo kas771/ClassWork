@@ -7,7 +7,7 @@ import java.util.ArrayList;
  *
  */
 public class Collision implements Comparable<Collision> {
-	//location in arraylist for each
+	//location in ArrayList for each from source file
 	public final static int ZIP = 3;
 	public final static int INJ = 8;
 	private final int KILL = 9;
@@ -16,19 +16,15 @@ public class Collision implements Comparable<Collision> {
 	private final int VEH = 19;
 	
 
-	//zipcode where it occurred
-	int zip;
 	
-	//number total persons injuries and fatalities
-	int injured;
+	private int zip;//zipcode where it occurred
+	private int injured;//total number injured
+	private int killed;//total number killed
+	private int cyc_injuried;//number cyclists injured
+	private int cyc_killed;//number cyclists killed
+	private String vehicle;//vehicle type
 	
-	//number of cyclist injuries and fatalities
-	int cyc_injuried;
-	
-	//vehicle type
-	String vehicle;
-	
-	int feature;
+	private int feature;//used for sorting purposes
 	
 	//default constructor
 	Collision(){}
@@ -40,31 +36,22 @@ public class Collision implements Comparable<Collision> {
 	public Collision(ArrayList<String> event){
 		this.zip = zip(event);
 		this.injured = injured(event);
-		this.cyc_injuried = cyc(event);
+		this.killed = killed(event);
+		this.cyc_injuried = cycInj(event);
+		this.cyc_killed = cycKill(event);
 		this.vehicle = vehicle(event);
 		this.feature = -5;
 	}
 
-	/**
-	 * 
-	 */
-	public void print(){
-		System.out.println("Zipcode: " + this.zip);
-		System.out.println("Number total injured or killed: " + this.injured);
-		System.out.println("Number cyclists injured or killed: " + this.cyc_injuried);
-		System.out.println("Vehicle type: " + this.vehicle);
-		System.out.println("Feature: " + this.feature);
-		System.out.println(" flag 8");
-	}
-	
+
+	//getters and setters
+	/////////////////////
 	int getFeature(){
 		return this.feature;
-	}
-	
+	}	
 	void setFeature(int f){
 		this.feature = f;
 	}
-	
 	/**
 	 * 
 	 * @return
@@ -72,31 +59,61 @@ public class Collision implements Comparable<Collision> {
 	public int getZip(){
 		return this.zip;
 	}
-	
+	public void setZip(int z){
+		this.zip = z;
+	}
 	/**
 	 * 
 	 * @return
 	 */
-	int getInj(){
+	public int getInj(){
 		return this.injured;
+	}
+	public void setInj(int inj){
+		this.injured =inj;
+	}
+	public int getKill(){
+		return this.killed;
+	}
+	
+	public void setKill(int kill){
+		this.killed =kill;
 	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	int getCycInj(){
+	public int getCycInj(){
 		return this.cyc_injuried;
 	}
 	
+	public void setCycInj(int cyc){
+		this.cyc_injuried = cyc;
+	}
+	
+	public int getCycKill(){
+		return this.cyc_killed;
+	}
+	
+	public void setCycKill(int kill){
+		this.cyc_killed = kill;
+	}
+	
 	/**
 	 * 
 	 * @return
 	 */
-	String getVeh(){
+	public String getVeh(){
 		return this.vehicle;
 	}
 	
+	public void setVeh(String v){
+		this.vehicle = v;
+	}
+
+	///gets information from the event passed in
+	/////////////////////////////
 	/**
 	 * 
 	 * @param event
@@ -115,11 +132,14 @@ public class Collision implements Comparable<Collision> {
 	 */
 	private int injured(ArrayList<String> event){
 		String i = event.get(INJ);
-		String k = event.get(KILL);
 		int inj = Integer.parseInt(i);
-		int kill = Integer.parseInt(k);
-		inj+= kill;
 		return inj;
+	}
+	
+	private int killed(ArrayList<String> event){
+		String k = event.get(KILL);
+		int kill = Integer.parseInt(k);
+		return kill;
 	}
 	
 	/**
@@ -127,13 +147,16 @@ public class Collision implements Comparable<Collision> {
 	 * @param event
 	 * @return
 	 */
-	private int cyc(ArrayList<String> event){
+	private int cycInj(ArrayList<String> event){
 		String i = event.get(CYC_INJ);
-		String k = event.get(CYC_KILL);
 		int inj = Integer.parseInt(i);
-		int kill = Integer.parseInt(k);
-		inj+= kill;
 		return inj;
+	}
+	
+	private int cycKill(ArrayList<String> event){
+		String k = event.get(CYC_KILL);
+		int kill = Integer.parseInt(k);
+		return kill;
 	}
 	
 	/**
@@ -144,6 +167,19 @@ public class Collision implements Comparable<Collision> {
 	private String vehicle(ArrayList<String> event){
 		String vehicle = event.get(VEH);
 		return vehicle;
+	}
+	
+	/////other methods
+	/**
+	 * 
+	 */
+	public void print(){
+		System.out.println("Zipcode: " + this.zip);
+		System.out.println("Number total injured or killed: " + this.injured + this.killed);
+		System.out.println("Number cyclists injured or killed: " + this.cyc_injuried + this.cyc_killed);
+		System.out.println("Vehicle type: " + this.vehicle);
+		System.out.println("Feature: " + this.feature);
+		System.out.println(" flag 8");
 	}
 
 	/**

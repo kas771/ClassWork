@@ -17,23 +17,23 @@ public class Collision implements Comparable<Collision> {
 	private final int VEH = 19;
 
 
-	private int zip;//zipcode where it occurred
-	private int injured;//total number injured
-	private int killed;//total number killed
-	private int cyc_injuried;//number cyclists injured
-	private int cyc_killed;//number cyclists killed
-	private String vehicle;//vehicle type
+	protected int zip;//zipcode where it occurred
+	protected int injured;//total number injured
+	protected int killed;//total number killed
+	protected int cyc_injuried;//number cyclists injured
+	protected int cyc_killed;//number cyclists killed
+	protected String vehicle;//vehicle type
 
-	public final int[] f = {0, 1, 2, 3};//used for sorting purposes
+	public final static int[] f = {0, 1, 2, 3};//used for sorting purposes
 	//valid values are:
 	//0 = zipcode, 1 = injured and killed, 2 = cyclists injured and killed, 
 	//3 = number collisions
-	
+
 	//the types of vehicles of interest
 	private final String[] VEHICLE_TYPES = {"taxi", "bus", "bicycle", "fire truck", "ambulance"};
 
 	//must be set to one of the above values in f
-	private int feature;
+	protected int feature;
 
 	/**
 	 * default constructor
@@ -107,7 +107,7 @@ public class Collision implements Comparable<Collision> {
 	 * @param inj the number of injured
 	 */
 	public void setInj(int inj){
-		if (isValidNumberPeople(inj) == true){
+		if (isValidNumber(inj) == true){
 			this.injured =inj;
 		}
 	}
@@ -124,7 +124,7 @@ public class Collision implements Comparable<Collision> {
 	 * @param kill
 	 */
 	public void setKill(int kill){
-		if (isValidNumberPeople(kill) == true){
+		if (isValidNumber(kill) == true){
 			this.killed =kill;
 		}
 	}
@@ -143,7 +143,7 @@ public class Collision implements Comparable<Collision> {
 	 */
 
 	public void setCycInj(int cyc){
-		if (isValidNumberPeople(cyc) == true){
+		if (isValidNumber(cyc) == true){
 			this.cyc_injuried = cyc;
 		}
 	}
@@ -163,12 +163,11 @@ public class Collision implements Comparable<Collision> {
 	 */
 
 	public void setCycKill(int kill){
-		if (isValidNumberPeople(kill) == true){
+		if (isValidNumber(kill) == true){
 			this.cyc_killed = kill;
 		}
 	}
-	
-	//TODO: build in check for vehicle type
+
 
 	/**
 	 * 
@@ -214,7 +213,7 @@ public class Collision implements Comparable<Collision> {
 		if (isValid(event) == true){
 			String i = event.get(INJ);
 			int inj = Integer.parseInt(i);
-			if (isValidNumberPeople(inj)== true){
+			if (isValidNumber(inj)== true){
 				return inj;
 			} else{
 				return -1;
@@ -235,7 +234,7 @@ public class Collision implements Comparable<Collision> {
 		if (isValid(event) == true){
 			String k = event.get(KILL);
 			int kill = Integer.parseInt(k);
-			if (isValidNumberPeople(kill)== true){
+			if (isValidNumber(kill)== true){
 				return kill;
 			} else {
 				return -1;
@@ -257,7 +256,7 @@ public class Collision implements Comparable<Collision> {
 		if (isValid(event) == true){
 			String i = event.get(CYC_INJ);
 			int inj = Integer.parseInt(i);
-			if (isValidNumberPeople(inj)== true){
+			if (isValidNumber(inj)== true){
 				return inj;
 			} else {
 				return -1;
@@ -278,7 +277,7 @@ public class Collision implements Comparable<Collision> {
 		if (isValid(event) == true){
 			String k = event.get(CYC_KILL);
 			int kill = Integer.parseInt(k);
-			if (isValidNumberPeople(kill)== true){
+			if (isValidNumber(kill)== true){
 				return kill;
 			} else {
 				return -1;
@@ -288,7 +287,7 @@ public class Collision implements Comparable<Collision> {
 		}
 	}
 
-	
+
 	/**finds vehicle element in input and returns the string representation
 	 * @param event ArrayList of strings
 	 * @return one of the vehicle types or "other"
@@ -341,11 +340,13 @@ public class Collision implements Comparable<Collision> {
 			} 
 
 			if (feature == f[1]){
-				if (this.injured > c.injured){
+				int ik = this.injured + this.killed;
+				int IK = c.injured + c.killed;
+				if (ik > IK){
 					return -1;
 				}
 
-				if (this.injured == c.injured){
+				if (ik == IK){
 					return 0;
 				}
 
@@ -355,11 +356,13 @@ public class Collision implements Comparable<Collision> {
 			}
 
 			if (feature == f[2]){
-				if (this.cyc_injuried > c.cyc_injuried){
+				int ci = this.cyc_injuried + this.cyc_killed;
+				int CI = c.cyc_injuried + c.cyc_killed;
+				if (ci > CI){
 					return -1;
 				}
 
-				if (this.cyc_injuried == c.cyc_injuried){
+				if (ci == CI){
 					return 0;
 				}
 
@@ -371,8 +374,8 @@ public class Collision implements Comparable<Collision> {
 			System.out.println("Invalid comparison");
 			return -5;
 		} 
-			return -5;
-		
+		return -5;
+
 	}
 
 	/**
@@ -381,7 +384,7 @@ public class Collision implements Comparable<Collision> {
 	 * @param a the integer that might be in f
 	 * @return true if a is a valid feature, false if invalid
 	 */
-	public boolean isValidFeature(int a){
+	public static boolean isValidFeature(int a){
 		boolean contains = false;
 		for (int i = 0; i < f.length; i++){
 			if (f[i]== a){
@@ -396,7 +399,7 @@ public class Collision implements Comparable<Collision> {
 	 * @param a the number of injured/killed
 	 * @return true if a is non-negative
 	 */
-	private boolean isValidNumberPeople(int a){
+	protected boolean isValidNumber(int a){
 		if (a >= 0){
 			return true;
 		} else { return false;}
@@ -405,12 +408,12 @@ public class Collision implements Comparable<Collision> {
 	/**
 	 * checks that the input list of strings from a line of the input file has the 
 	 * correct number of elements
-	 * @param event ArrayList that should have 21 elements
-	 * @return true if has exactly 21 elements
+	 * @param event ArrayList that should have CollisionInfo.ENTRIES elements
+	 * @return true if has exactly CollisionInfo.ENTRIES elements
 	 */
 	private boolean isValid( ArrayList<String> event){
 
-		if (event.size() == 21){
+		if (event.size() == CollisionInfo.ENTRIES){
 			return true;
 		} else { return false;}
 	}
@@ -428,5 +431,102 @@ public class Collision implements Comparable<Collision> {
 			} 
 		} return "other";
 	}
+
+
+
+	/**
+	 * returns true if all entries in the line are full and there are enough entries
+	 * @param line an ArrayList of strings representing an input line
+	 * @return true if to be included in calculations, false if to be discarded
+	 */
+	static boolean longEnough(ArrayList<String> line){
+		boolean correct = true;
+		//System.out.println(correct);
+		if (line.size() < CollisionInfo.ENTRIES){
+			correct = false;
+			System.out.println("not enough entries");
+		} else {
+			for (int i = 0; i < line.size(); i++){
+				if(line.get(i).equals("")){
+					correct = false;
+					//System.out.println("blank entry at : " + i);
+				}
+			}
+		}
+		//System.out.println(correct);
+		return correct;
+	}
+
+
+	/**
+	 *Parses a line of text from a csv file and stores the information in
+	 *an ArrayList
+	 *
+	 *taken from StringParsing.java
+	 *
+	 * @param line a string of text from csv file
+	 * @return an ArrayList of strings of the entries in that line
+	 */
+	static ArrayList<String> parser(String line){
+		ArrayList<String> entries = new ArrayList<String>();
+		int lineLength = line.length();
+		StringBuffer nextWord = new StringBuffer(); 
+		char nextChar;
+		boolean insideQuotes = false;
+
+		for(int i = 0; i < lineLength; i++ ) {
+			nextChar = line.charAt(i); 
+			//add character to the current entry 
+			if ( nextChar != ',' && nextChar != '"' ) {
+				nextWord.append( nextChar );
+			}
+			//double quote found, decide if it is opening or closing one
+			else if (nextChar == '"' ) {
+				if ( insideQuotes ) {
+					insideQuotes = false;
+				}
+				else {
+					insideQuotes = true;
+				}
+			}
+			//found comma inside double quotes, just add it to the string
+			else if (nextChar == ',' && insideQuotes) {
+				nextWord.append( nextChar );
+			}
+			//end of the current entry reached, add it to the list of entries
+			//and reset the nextWord to empty string
+			else if (nextChar == ',' && !insideQuotes) {
+				//trim the white space before adding to the list
+				entries.add( nextWord.toString().trim() );
+
+				nextWord = new StringBuffer();
+			}
+
+			else {
+				System.err.println("This should never be printed.\n");
+			}
+		}
+		//add the last word
+		//trim the white space before adding to the list
+		entries.add( nextWord.toString().trim() );
+
+		//System.out.println("Nailed it!");
+		return entries;
+	}
 	
+	/**
+	 * prints all the entries in an ArrayList of strings
+	 * @param list the array list to be printed
+	 */
+	static void printArrayList(ArrayList<String> list){
+		int length = list.size();
+
+		System.out.println();
+		for (int i = 0; i<length-1; i++ ){
+			System.out.print(list.get(i) + ", ");
+		}
+		System.out.print(list.get(length-1));
+		
+	}
+
 }

@@ -1,63 +1,91 @@
+
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 /**
- * manages objects of collision class
+ * manages objects of collision class 
  *  
  * @author kathrynsutton
  *
  */
 public class CollisionList {
-//	private final int zip = 0;
-//	private final int inj =1;
-//	private final int cyc_inj =2;
 	
 	private ArrayList<Collision> list;
-	private int feature; //valid options are 3, 8, 12 (See Collision class)
+	
+	private int feature; //same options as collision class
 
+	/**
+	 * default constructor initializes ArrayList and sets feature to -1
+	 */
 	CollisionList(){
 		list = new ArrayList<Collision>();
 		this.feature = -1;
 	}
 	
+	/**
+	 * adds collision to collision list and sets feature of all collisions
+	 * to same feature as collisionlist
+	 * @param c collision to add to collision list
+	 */
 	public void fill(Collision c){
 		this.list.add(c);
 		c.setFeature(this.feature);
 		
 	}
 	
-	
+	/**
+	 * 
+	 * @return the feature of the collision list and all its collisions
+	 */
 	public int getFeature(){
 		return this.feature;
 	}
 	
-	public void setFeature(int f){
-		this.feature = f;
-		for (int i = 0; i < this.list.size(); i++){
-			list.get(i).setFeature(f);
+	/**
+	 * if the feature is valid sets the feature of the collision list and all
+	 * collisions in the list to that feature
+	 * @param a the int feature
+	 */
+	public void setFeature(int a){
+		if (Collision.isValidFeature(a)== true){
+			this.feature = a;
+			for (int i = 0; i < this.list.size(); i++){
+				list.get(i).setFeature(a);
+			}
 		}
 	}
 	
+	/**
+	 * @return the number of elements in the collisionlist
+	 */
 	public int size(){
 		return this.list.size();
 	}
 	
+	/**
+	 * returns the collision object for a given index in the collision list
+	 * @param index in collision list
+	 * @return the collision object at the index, or the collision at 0 if index was invalid
+	 */
 	public Collision get(int index){
-		return this.list.get(index);
+		if (index >= 0 && index < this.size()){
+			return this.list.get(index);
+		} else {
+			return this.list.get(0);
+		}
 	}
 	
 	/**
-	 * takes an unsorted ArrayList of collisions and sorts them by decreasing order
+	 * takes an unsorted collision list and sorts the elements by increasing order
 	 * for a specific attribute
-	 * @param feature the attribute to sort by
-	 * @param unsorted the input ArrayList
-	 * @return an ArrayList of collisions sorted by feature
+	 * need to set feature of input list with setFeature()
+	 * @return an ArrayList of collisions sorted by feature, or unchanged if invalid feature
 	 */
 	public void sort() {
 		//ArrayList<Collision> list = new ArrayList<Collision>();
-		if (this.feature == Collision.ZIP || this.feature == Collision.INJ || 
-		this.feature == Collision.CYC_INJ){
+		if (Collision.isValidFeature(this.feature)== true){
 			Collections.sort(this.list);
 		}
 		else{
@@ -82,18 +110,23 @@ public class CollisionList {
 	}
 	*/
 	
+	/**
+	 * prints all the collision in the collision list
+	 */
 	public void print() {
 		for (int i = 0; i < this.list.size(); i++){
 			Collision a = this.list.get(i);
 			a.print();
 		}
-		System.out.println(" flag 7");
+		//System.out.println(" flag 7");
 	}
 	
 	/**
-	 * 
+	 * writes an ArrayList to the output file
+	 * @param list an ArrayList of strings
+	 * @param tasks the PrintWriter to the output file
 	 */
-	static void write(ArrayList<String> list, PrintWriter tasks){
+	public void write(ArrayList<String> list, PrintWriter tasks){
 		int length = list.size();
 		tasks.println();
 		for (int i = 0; i<length-1; i++ ){
@@ -103,98 +136,34 @@ public class CollisionList {
 	}
 	
 	/**
-	 * returns true if all entries in the arraylist are full and there are enough entries
-	 * @param line
-	 * @return true if to be included
+	 * reads in the input file line by line and populates a CollisionList
+	 * with collisions, ignoring lines with empty elements
+	 * @param input the scanner from the input file
+	 * @return a full CollisionList
 	 */
-	static boolean longEnough(ArrayList<String> line){
-		boolean correct = true;
-		//System.out.println(correct);
-		if (line.size() < FileReader.ENTRIES){
+	public CollisionList generateList(Scanner input){
+		boolean correct;
+		int count = 0;//counter to discard first line
+		CollisionList list = new CollisionList();
+		while (input.hasNextLine()) {
+			count ++;
 			correct = false;
-			System.out.println("not enough entries");
-		} else {
-			for (int i = 0; i < line.size(); i++){
-				if(line.get(i).equals("")){
-					correct = false;
-					System.out.println("blank entry at : " + i);
-				}
+			String line = input.nextLine(); 
+			ArrayList <String> words = Collision.parser(line);
+			//System.out.println(correct);
+			correct = Collision.longEnough(words);
+			//System.out.println(correct);
+			if (correct == true && count > 1){
+
+				//System.out.println("flag 9");
+				//printArrayList(words);
+				//CollisionList.write(words, tasks);
+				//System.out.println(words.get(3));
+				Collision c = new Collision(words);
+				list.fill(c);
 			}
 		}
-		//System.out.println(correct);
-		return correct;
+		return list;
 	}
 	
-	/**
-	 *Parses a line of text from a csv file and stores the information in
-	 *an ArrayList
-	 *
-	 *take from StringParsing.java
-	 *
-	 * @param line a string of text from csv file
-	 * @return an ArrayList of strings of the entries in that line
-	 */
-	static ArrayList<String> parser(String line){
-		ArrayList<String> entries = new ArrayList<String>();
-		int lineLength = line.length();
-		StringBuffer nextWord = new StringBuffer(); 
-		char nextChar;
-		boolean insideQuotes = false;
-		
-		for(int i = 0; i < lineLength; i++ ) {
-			nextChar = line.charAt(i); 
-			//add character to the current entry 
-			if ( nextChar != ',' && nextChar != '"' ) {
-				nextWord.append( nextChar );
-			}
-			//double quote found, decide if it is opening or closing one
-			else if (nextChar == '"' ) {
-				if ( insideQuotes ) {
-					insideQuotes = false;
-				}
-				else {
-					insideQuotes = true;
-				}
-			}
-			//found comma inside double quotes, just add it to the string
-			else if (nextChar == ',' && insideQuotes) {
-				nextWord.append( nextChar );
-			}
-			//end of the current entry reached, add it to the list of entries
-			//and reset the nextWord to empty string
-			else if (nextChar == ',' && !insideQuotes) {
-				//trim the white space before adding to the list
-				entries.add( nextWord.toString().trim() );
-				
-				nextWord = new StringBuffer();
-			}
-			
-			else {
-				System.err.println("This should never be printed.\n");
-			}
-		}
-		//add the last word
-		//trim the white space before adding to the list
-		entries.add( nextWord.toString().trim() );
-		
-		//System.out.println("Nailed it!");
-		return entries;
-	}
-	
-	/**
-	 * prints all the entries in an arraylist of strings
-	 * @param list the array list to be printed
-	 */
-	static void printArrayList(ArrayList<String> list){
-		int length = list.size();
-
-		System.out.println();
-		for (int i = 0; i<length-1; i++ ){
-			System.out.print(list.get(i) + ", ");
-		}
-		System.out.print(list.get(length-1));
-		
-	}
-
-
 }
